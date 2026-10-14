@@ -1,0 +1,182 @@
+export interface InventoryItem {
+  id: string;
+  name: string;
+  genericName: string;
+  barcode: string;
+  dosage: string;
+  batchNumber: string;
+  expiryDate: string; // ISO format or formatted
+  isExpired: boolean;
+  isNearExpiry: boolean;
+  availableStock: number;
+  unitPrice: number;
+  category: "Antibiotics" | "Cardiovascular" | "Pain Relief" | "Respiratory" | "General";
+}
+
+export const mockInventory: InventoryItem[] = [
+  {
+    id: "inv-001",
+    name: "Augmentin 625mg",
+    genericName: "Amoxicillin / Clavulanate",
+    barcode: "8901023001",
+    dosage: "625mg Film-coated Tablet",
+    batchNumber: "BTH-312",
+    expiryDate: "Nov 28, 2026 12:00 AM",
+    isExpired: false,
+    isNearExpiry: true,
+    availableStock: 15,
+    unitPrice: 24.0,
+    category: "Antibiotics",
+  },
+  {
+    id: "inv-002",
+    name: "Augmentin 625mg",
+    genericName: "Amoxicillin / Clavulanate",
+    barcode: "8901023002",
+    dosage: "625mg Film-coated Tablet",
+    batchNumber: "BTH-804",
+    expiryDate: "Dec 15, 2027 12:00 AM",
+    isExpired: false,
+    isNearExpiry: false,
+    availableStock: 40,
+    unitPrice: 24.0,
+    category: "Antibiotics",
+  },
+  {
+    id: "inv-003",
+    name: "Medicine Two",
+    genericName: "Azithromycin 500mg",
+    barcode: "8901023003",
+    dosage: "500mg Capsule",
+    batchNumber: "BTH-902",
+    expiryDate: "Apr 22, 2027 12:00 AM",
+    isExpired: false,
+    isNearExpiry: false,
+    availableStock: 45,
+    unitPrice: 152.0,
+    category: "Antibiotics",
+  },
+  {
+    id: "inv-004",
+    name: "Medicine One",
+    genericName: "Rosuvastatin Calcium",
+    barcode: "8901023004",
+    dosage: "20mg Tablet",
+    batchNumber: "BTH-108",
+    expiryDate: "Apr 22, 2027 12:00 AM",
+    isExpired: false,
+    isNearExpiry: false,
+    availableStock: 60,
+    unitPrice: 270.0,
+    category: "Cardiovascular",
+  },
+  {
+    id: "inv-005",
+    name: "Test Medicine",
+    genericName: "Cefixime Trihydrate",
+    barcode: "8901023005",
+    dosage: "400mg Capsule",
+    batchNumber: "BTH-441",
+    expiryDate: "Apr 22, 2027 12:00 AM",
+    isExpired: false,
+    isNearExpiry: false,
+    availableStock: 28,
+    unitPrice: 196.0,
+    category: "Antibiotics",
+  },
+  {
+    id: "inv-006",
+    name: "Panadol CF Extra",
+    genericName: "Paracetamol / Pseudoephedrine",
+    barcode: "8901023006",
+    dosage: "500mg Caplets",
+    batchNumber: "BTH-559",
+    expiryDate: "Jan 18, 2028 12:00 AM",
+    isExpired: false,
+    isNearExpiry: false,
+    availableStock: 50,
+    unitPrice: 23.0,
+    category: "Pain Relief",
+  },
+  {
+    id: "inv-007",
+    name: "Lipitor 20mg",
+    genericName: "Atorvastatin Oral",
+    barcode: "8901023007",
+    dosage: "20mg Tablet",
+    batchNumber: "BTH-773",
+    expiryDate: "May 14, 2028 12:00 AM",
+    isExpired: false,
+    isNearExpiry: false,
+    availableStock: 35,
+    unitPrice: 84.5,
+    category: "Cardiovascular",
+  },
+  {
+    id: "inv-008",
+    name: "Ventolin Inhaler",
+    genericName: "Salbutamol Sulfate",
+    barcode: "8901023008",
+    dosage: "100mcg/dose Evohaler",
+    batchNumber: "BTH-201",
+    expiryDate: "Jun 10, 2027 12:00 AM",
+    isExpired: false,
+    isNearExpiry: false,
+    availableStock: 22,
+    unitPrice: 32.0,
+    category: "Respiratory",
+  },
+  {
+    id: "inv-009",
+    name: "Amoxicillin 250mg",
+    genericName: "Amoxicillin Trihydrate",
+    barcode: "8901023009",
+    dosage: "250mg Dry Syrup",
+    batchNumber: "BTH-EXP99",
+    expiryDate: "Jan 01, 2024 12:00 AM",
+    isExpired: true,
+    isNearExpiry: false,
+    availableStock: 8,
+    unitPrice: 15.0,
+    category: "Antibiotics",
+  },
+];
+
+export const mockCustomers = [
+  {
+    name: "Susan Williams",
+    email: "susan.williams@gmail.com",
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80",
+    phone: "+1 (555) 234-5678",
+  },
+  {
+    name: "Bentley Howard",
+    email: "b.howard@outlook.com",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80",
+    phone: "+1 (555) 345-6789",
+  },
+  {
+    name: "Evelyn Johnson",
+    email: "evelyn.j@yahoo.com",
+    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80",
+    phone: "+1 (555) 456-7890",
+  },
+  {
+    name: "Marcus Vance",
+    email: "m.vance@medcorp.com",
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80",
+    phone: "+1 (555) 567-8901",
+  },
+  {
+    name: "Alicia Rodriguez",
+    email: "alicia.r@healthnet.org",
+    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80",
+    phone: "+1 (555) 678-9012",
+  },
+  {
+    name: "Walk-in Customer",
+    email: "counter@pharmacy.local",
+    avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80",
+    phone: "N/A",
+  },
+];

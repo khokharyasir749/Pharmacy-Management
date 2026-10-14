@@ -21,8 +21,20 @@ import {
 import { OrderItem } from "@/types/order";
 import { initialOrders } from "@/data/mockOrders";
 
-export default function RecentOrdersTable() {
-  const [orders, setOrders] = useState<OrderItem[]>(initialOrders);
+interface RecentOrdersTableProps {
+  orders?: OrderItem[];
+  onOrdersChange?: React.Dispatch<React.SetStateAction<OrderItem[]>>;
+}
+
+export default function RecentOrdersTable({
+  orders: propOrders,
+  onOrdersChange,
+}: RecentOrdersTableProps = {}) {
+  const [localOrders, setLocalOrders] = useState<OrderItem[]>(initialOrders);
+
+  const orders = propOrders ?? localOrders;
+  const setOrders = onOrdersChange ?? setLocalOrders;
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
