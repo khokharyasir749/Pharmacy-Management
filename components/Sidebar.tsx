@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Package,
@@ -68,7 +69,10 @@ const navSections: NavSection[] = [
   },
 ];
 
-export default function Sidebar({ isOpen, onClose, activePath = "/" }: SidebarProps) {
+export default function Sidebar({ isOpen, onClose, activePath: propActivePath }: SidebarProps) {
+  const pathname = usePathname();
+  const currentActive = propActivePath || pathname;
+
   // Collapsible sections state
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     LEADS: true,
@@ -166,7 +170,7 @@ export default function Sidebar({ isOpen, onClose, activePath = "/" }: SidebarPr
                     <ul className="space-y-1.5 pt-1">
                       {section.items.map((item) => {
                         const Icon = item.icon;
-                        const isActive = activePath === item.href;
+                        const isActive = currentActive === item.href;
 
                         return (
                           <li key={item.name}>

@@ -19,7 +19,6 @@ export default function AppShell({ children }: AppShellProps) {
         <Sidebar
           isOpen={mobileMenuOpen}
           onClose={() => setMobileMenuOpen(false)}
-          activePath="/"
         />
 
         {/* Right Main Content Area */}
