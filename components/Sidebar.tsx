@@ -16,6 +16,7 @@ import {
   ChevronUp,
   ChevronDown,
   X,
+  Truck,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -53,6 +54,7 @@ const navSections: NavSection[] = [
     defaultExpanded: true,
     items: [
       { name: "Orders", href: "/", icon: ShoppingCart },
+      { name: "Purchases", href: "/purchases", icon: Truck },
       { name: "Sales", href: "/sales", icon: TrendingUp },
       { name: "Customers", href: "/customers", icon: Users },
     ],
