@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import {
   Wallet,
@@ -23,12 +24,16 @@ import CloseRegisterModal from "@/components/payments/CloseRegisterModal";
 import RecordExpenseModal from "@/components/payments/RecordExpenseModal";
 import SessionDetailsModal from "@/components/payments/SessionDetailsModal";
 import OpenRegisterModal from "@/components/payments/OpenRegisterModal";
-import { initialRegisterSessions, initialExpenses } from "@/data/mockPayments";
+import { initialRegisterSessions, initialExpenses, getStoredExpenses } from "@/data/mockPayments";
 import { RegisterSession, Expense } from "@/types/payment";
 
 export default function PaymentsPage() {
   const [sessions, setSessions] = useState<RegisterSession[]>(initialRegisterSessions);
   const [expenses, setExpenses] = useState<Expense[]>(initialExpenses);
+
+  useEffect(() => {
+    setExpenses(getStoredExpenses());
+  }, []);
 
   // Active Tab: 'sessions' | 'expenses'
   const [activeTab, setActiveTab] = useState<"sessions" | "expenses">("sessions");
@@ -161,14 +166,13 @@ export default function PaymentsPage() {
         {/* Right Action Toolbar */}
         <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
           {/* Secondary CTA: Outline pill button + Record Expense */}
-          <button
-            type="button"
-            onClick={() => setIsRecordExpenseOpen(true)}
+          <Link
+            href="/payments/expenses/new"
             className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full border border-pharmacy-border bg-white hover:bg-pharmacy-canvas text-xs font-semibold text-pharmacy-textSecondary transition-all shadow-xs cursor-pointer active:scale-95"
           >
             <Receipt className="w-3.5 h-3.5 text-teal-800" />
             <span>+ Record Expense</span>
-          </button>
+          </Link>
 
           {/* Primary CTA: Dark teal pill button #0B2B28 */}
           {activeSession ? (

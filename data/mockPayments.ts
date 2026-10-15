@@ -199,3 +199,31 @@ export const initialExpenses: Expense[] = [
     notes: "Approved by Head Pharmacist",
   },
 ];
+
+export function getStoredExpenses(): Expense[] {
+  if (typeof window === "undefined") return initialExpenses;
+  try {
+    const stored = localStorage.getItem("pms_expenses_list");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    // ignore
+  }
+  return initialExpenses;
+}
+
+export function saveExpense(expense: Expense): Expense[] {
+  const current = getStoredExpenses();
+  const updated = [expense, ...current.filter((e) => e.id !== expense.id)];
+  initialExpenses.unshift(expense);
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem("pms_expenses_list", JSON.stringify(updated));
+    } catch (e) {
+      // ignore
+    }
+  }
+  return updated;
+}

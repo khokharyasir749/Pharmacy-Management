@@ -8,11 +8,13 @@ import RevenueStatCard from "@/components/analytics/RevenueStatCard";
 import PendingOrdersCard from "@/components/analytics/PendingOrdersCard";
 import RecentOrdersTable from "@/components/orders/RecentOrdersTable";
 import CreateOrderModal from "@/components/orders/CreateOrderModal";
+import DateRangeDropdown from "@/components/common/DateRangeDropdown";
 import { initialOrders, getStoredOrders } from "@/data/mockOrders";
 import { OrderItem } from "@/types/order";
 
 export default function OrdersManagementPage() {
   const [orders, setOrders] = useState<OrderItem[]>(initialOrders);
+  const [dateRange, setDateRange] = useState("This Month");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<{
     title: string;
@@ -23,18 +25,79 @@ export default function OrdersManagementPage() {
     setOrders(getStoredOrders());
   }, []);
 
-  // Dynamic KPI calculations based on live orders
+  // Dynamic KPI calculations based on live orders and dateRange
   const currentTotalRevenue = orders.reduce(
     (acc, curr) => acc + curr.quantity * curr.product.unitPrice,
     0
   );
-  // Base offset to match the Dribbble reference ($74,848 baseline)
-  const formattedRevenue = `$${(73500 + currentTotalRevenue).toLocaleString(undefined, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  })}`;
 
-  const pendingCount = 130 + orders.filter((o) => o.status !== "Completed").length;
+  const getDashboardKPIs = () => {
+    switch (dateRange) {
+      case "Today":
+        return {
+          revenue: `$${(3200 + Math.min(286, currentTotalRevenue * 0.05)).toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}`,
+          revenueTrend: "+8.2%",
+          revenuePeriod: "vs yesterday",
+          pending: 6,
+          pendingTrend: "-12%",
+          pendingPeriod: "vs yesterday",
+        };
+      case "Last 7 Days":
+        return {
+          revenue: `$${(18500 + Math.min(1420, currentTotalRevenue * 0.25)).toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}`,
+          revenueTrend: "+14.6%",
+          revenuePeriod: "vs previous week",
+          pending: 38,
+          pendingTrend: "-08%",
+          pendingPeriod: "vs previous week",
+        };
+      case "Last Quarter":
+        return {
+          revenue: `$${(221000 + currentTotalRevenue * 3).toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}`,
+          revenueTrend: "+31.4%",
+          revenuePeriod: "YoY growth",
+          pending: 390,
+          pendingTrend: "+04%",
+          pendingPeriod: "quarterly volume",
+        };
+      case "Custom Range":
+        return {
+          revenue: `$${(46000 + currentTotalRevenue * 0.6).toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}`,
+          revenueTrend: "+12.0%",
+          revenuePeriod: "selected timeframe",
+          pending: 74,
+          pendingTrend: "-02%",
+          pendingPeriod: "selected range",
+        };
+      case "This Month":
+      default:
+        return {
+          revenue: `$${(73500 + currentTotalRevenue).toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}`,
+          revenueTrend: "+25%",
+          revenuePeriod: "from last 4 months",
+          pending: 130 + orders.filter((o) => o.status !== "Completed").length,
+          pendingTrend: "-05%",
+          pendingPeriod: "from last 4 months",
+        };
+    }
+  };
+
+  const kpis = getDashboardKPIs();
 
   const handleOrderCreated = (newOrder: OrderItem) => {
     // Atomic insert at the top of the table without reload
@@ -90,16 +153,32 @@ export default function OrdersManagementPage() {
           </p>
         </div>
 
-        {/* Create Order Button - Routes to dedicated full POS checkout page */}
-        <Link
-          href="/orders/new"
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-pharmacy-dark hover:bg-pharmacy-darkHover text-white font-medium text-sm shadow-pill hover:shadow-lg transition-all duration-200 self-start sm:self-auto group active:scale-95 cursor-pointer"
-        >
-          <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-white group-hover:rotate-90 transition-transform duration-200">
-            <Plus className="w-3.5 h-3.5 stroke-[3]" />
-          </div>
-          <span>Create Order</span>
-        </Link>
+        {/* Action Toolbar */}
+        <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
+          {/* Date Range Selector Pill */}
+          <DateRangeDropdown
+            value={dateRange}
+            onChange={(val) => {
+              setDateRange(val);
+              setToastMessage({
+                title: "Dashboard Range Updated",
+                description: `Showing orders and financial metrics for: ${val}`,
+              });
+              setTimeout(() => setToastMessage(null), 3500);
+            }}
+          />
+
+          {/* Create Order Button - Routes to dedicated full POS checkout page */}
+          <Link
+            href="/orders/new"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-pharmacy-dark hover:bg-pharmacy-darkHover text-white font-medium text-sm shadow-pill hover:shadow-lg transition-all duration-200 group active:scale-95 cursor-pointer"
+          >
+            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-white group-hover:rotate-90 transition-transform duration-200">
+              <Plus className="w-3.5 h-3.5 stroke-[3]" />
+            </div>
+            <span>Create Order</span>
+          </Link>
+        </div>
       </div>
 
       {/* Top Analytics Grid Section (Dual Line Chart + Stacked KPI Cards) */}
@@ -112,14 +191,14 @@ export default function OrdersManagementPage() {
         {/* Right: Stacked KPI Stat Cards (~35% width with live dynamic stats) */}
         <div className="lg:col-span-4 flex flex-col gap-5 justify-between">
           <RevenueStatCard
-            amount={formattedRevenue}
-            trendPercentage="+25%"
-            trendPeriod="from last 4 months"
+            amount={kpis.revenue}
+            trendPercentage={kpis.revenueTrend}
+            trendPeriod={kpis.revenuePeriod}
           />
           <PendingOrdersCard
-            count={pendingCount}
-            trendPercentage="-05%"
-            trendPeriod="from last 4 months"
+            count={kpis.pending}
+            trendPercentage={kpis.pendingTrend}
+            trendPeriod={kpis.pendingPeriod}
           />
         </div>
       </section>

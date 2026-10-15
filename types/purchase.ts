@@ -31,6 +31,7 @@ export interface PurchaseOrder {
   paidAmount: number;
   paymentStatus: PaymentStatus;
   status: POStatus;
+  expectedDeliveryDate?: string;
   notes?: string;
 }
 

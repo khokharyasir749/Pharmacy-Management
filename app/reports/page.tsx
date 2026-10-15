@@ -21,6 +21,7 @@ import InventoryExpiryReport from "@/components/reports/InventoryExpiryReport";
 import CreditLedgerReport from "@/components/reports/CreditLedgerReport";
 import AuditTrailTable from "@/components/reports/AuditTrailTable";
 import ReportPrintModal from "@/components/reports/ReportPrintModal";
+import DateRangeDropdown, { DEFAULT_DATE_RANGES } from "@/components/common/DateRangeDropdown";
 import {
   mockSalesSummary,
   mockProductProfitRecords,
@@ -29,16 +30,56 @@ import {
   mockCustomerLedgers,
   mockAuditTrailEvents,
 } from "@/data/mockReports";
+import { SalesProfitSummary, ProductProfitRecord } from "@/types/report";
 
 type ReportTab = "sales" | "inventory" | "credit" | "audit";
 
-const DATE_RANGE_OPTIONS = [
-  "Today",
-  "Last 7 Days",
-  "This Month",
-  "Last Quarter",
-  "Custom Range",
-];
+const DATE_RANGE_CONFIGS: Record<
+  string,
+  {
+    factor: number;
+    totalOrders: number;
+    label: string;
+    trend: string;
+    periodText: string;
+  }
+> = {
+  Today: {
+    factor: 0.042,
+    totalOrders: 48,
+    label: "Today's Counter Ledger",
+    trend: "+8.2% vs yesterday",
+    periodText: "Past 24 hours (Oct 15, 2026)",
+  },
+  "Last 7 Days": {
+    factor: 0.24,
+    totalOrders: 312,
+    label: "Trailing 7-Day Window",
+    trend: "+14.6% vs previous week",
+    periodText: "Oct 8 - Oct 15, 2026",
+  },
+  "This Month": {
+    factor: 1.0,
+    totalOrders: 1342,
+    label: "Current MTD Cycle",
+    trend: "+19.4% vs last month",
+    periodText: "Oct 1 - Oct 31, 2026",
+  },
+  "Last Quarter": {
+    factor: 3.0,
+    totalOrders: 4026,
+    label: "Q3 Cumulative Audit",
+    trend: "+27.1% YoY growth",
+    periodText: "July 1 - Sept 30, 2026",
+  },
+  "Custom Range": {
+    factor: 0.55,
+    totalOrders: 738,
+    label: "Selected Period Window",
+    trend: "+11.8% benchmarked",
+    periodText: "Custom selected date range",
+  },
+};
 
 export default function ReportsPage() {
   const [activeTab, setActiveTab] = useState<ReportTab>("sales");
@@ -46,10 +87,71 @@ export default function ReportsPage() {
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Active configuration for reactive calculations
+  const activeConfig = DATE_RANGE_CONFIGS[dateRange] || DATE_RANGE_CONFIGS["This Month"];
+
+  // Reactive Sales Summary calculation
+  const dynamicSalesSummary: SalesProfitSummary = useMemo(() => {
+    const f = activeConfig.factor;
+    const grossSales = Math.round(mockSalesSummary.grossSales * f * 100) / 100;
+    const itemDiscounts = Math.round(mockSalesSummary.itemDiscounts * f * 100) / 100;
+    const customerReturns = Math.round(mockSalesSummary.customerReturns * f * 100) / 100;
+    const netRevenue = Math.round((grossSales - itemDiscounts - customerReturns) * 100) / 100;
+    const cogs = Math.round(mockSalesSummary.cogs * f * 100) / 100;
+    const operatingExpenses = Math.round(mockSalesSummary.operatingExpenses * f * 100) / 100;
+    const estimatedNetProfit = Math.round((netRevenue - cogs - operatingExpenses) * 100) / 100;
+    const grossMarginPercent =
+      netRevenue > 0
+        ? Math.round(((netRevenue - cogs) / netRevenue) * 1000) / 10
+        : 28.4;
+    const netMarginPercent =
+      netRevenue > 0
+        ? Math.round((estimatedNetProfit / netRevenue) * 1000) / 10
+        : 21.8;
+
+    return {
+      grossSales,
+      itemDiscounts,
+      customerReturns,
+      netRevenue,
+      cogs,
+      operatingExpenses,
+      estimatedNetProfit,
+      grossMarginPercent,
+      netMarginPercent,
+    };
+  }, [activeConfig.factor]);
+
+  // Reactive Product Profit Records
+  const dynamicProductRecords: ProductProfitRecord[] = useMemo(() => {
+    const f = activeConfig.factor;
+    return mockProductProfitRecords.map((rec) => {
+      const unitsSold = Math.max(1, Math.round(rec.unitsSold * f));
+      const revenue = Math.round(rec.revenue * f * 100) / 100;
+      const batchCostBasis = Math.round(rec.batchCostBasis * f * 100) / 100;
+      const grossProfit = Math.round((revenue - batchCostBasis) * 100) / 100;
+      const marginPercent =
+        revenue > 0
+          ? Math.round(((grossProfit / revenue) * 100) * 10) / 10
+          : rec.marginPercent;
+      return {
+        ...rec,
+        unitsSold,
+        revenue,
+        batchCostBasis,
+        grossProfit,
+        marginPercent,
+      };
+    });
+  }, [activeConfig.factor]);
+
   // Dynamic Executive KPI Calculations
-  const netSalesRevenue = mockSalesSummary.netRevenue;
-  const grossProfit = mockSalesSummary.netRevenue - mockSalesSummary.cogs;
-  const grossMargin = mockSalesSummary.grossMarginPercent;
+  const netSalesRevenue = dynamicSalesSummary.netRevenue;
+  const grossProfit = dynamicSalesSummary.netRevenue - dynamicSalesSummary.cogs;
+  const grossMargin = dynamicSalesSummary.grossMarginPercent;
+  const netProfit = dynamicSalesSummary.estimatedNetProfit;
+  const netMargin = dynamicSalesSummary.netMarginPercent;
+  const totalOrders = activeConfig.totalOrders;
 
   const inventoryAssetValuation = useMemo(() => {
     return mockInventoryExpiryItems.reduce(
@@ -85,7 +187,7 @@ export default function ReportsPage() {
         "Gross Profit",
         "Margin Percent",
       ];
-      const rows = mockProductProfitRecords.map((r) => [
+      const rows = dynamicProductRecords.map((r) => [
         `"${r.productName}"`,
         r.sku,
         `"${r.category}"`,
@@ -234,22 +336,14 @@ export default function ReportsPage() {
         {/* Right Action Toolbar */}
         <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
           {/* Date Range Selector Pill */}
-          <div className="relative">
-            <select
-              value={dateRange}
-              onChange={(e) => setDateRange(e.target.value)}
-              className="pl-3 pr-8 py-2 rounded-full border border-pharmacy-border bg-white text-xs font-semibold text-pharmacy-dark focus:outline-none shadow-xs cursor-pointer appearance-none"
-            >
-              {DATE_RANGE_OPTIONS.map((opt) => (
-                <option key={opt} value={opt}>
-                  📅 {opt}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-pharmacy-textMuted">
-              ▼
-            </div>
-          </div>
+          <DateRangeDropdown
+            value={dateRange}
+            onChange={(val) => {
+              setDateRange(val);
+              setToastMessage(`Reporting period updated to: ${val}`);
+              setTimeout(() => setToastMessage(null), 3000);
+            }}
+          />
 
           {/* Secondary Action: Export CSV */}
           <button
@@ -296,7 +390,7 @@ export default function ReportsPage() {
             </div>
             <div className="flex items-center gap-1 mt-1 text-[11px] font-semibold text-emerald-700">
               <TrendingUp className="w-3 h-3" />
-              <span>Gross sales net of discounts & returns</span>
+              <span>{activeConfig.trend}</span>
             </div>
           </div>
         </div>
@@ -317,18 +411,18 @@ export default function ReportsPage() {
             </div>
             <div className="flex items-center gap-1.5 mt-1">
               <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                +{grossMargin}% margin
+                +{grossMargin}% gross margin
               </span>
               <span className="text-[11px] text-pharmacy-textMuted">vs COGS</span>
             </div>
           </div>
         </div>
 
-        {/* Card 3: Inventory Asset Value */}
+        {/* Card 3: Total Orders Dispensed */}
         <div className="bg-white rounded-3xl p-5 shadow-card border border-pharmacy-border/60 flex flex-col justify-between transition-all duration-300 hover:shadow-floating">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-pharmacy-textSecondary">
-              Inventory Asset Value
+              Total Orders Dispensed
             </span>
             <div className="p-2 rounded-2xl bg-indigo-50 text-indigo-700">
               <Package className="w-4 h-4" />
@@ -336,19 +430,19 @@ export default function ReportsPage() {
           </div>
           <div className="mt-3">
             <div className="text-3xl font-extrabold text-indigo-950 tracking-tight">
-              {formatCurrency(inventoryAssetValuation)}
+              {totalOrders.toLocaleString()}
             </div>
-            <div className="text-[11px] text-pharmacy-textMuted mt-1">
-              Cost basis valuation of active batches
+            <div className="flex items-center gap-1.5 mt-1 text-[11px] font-medium text-pharmacy-textMuted">
+              <span>{activeConfig.periodText}</span>
             </div>
           </div>
         </div>
 
-        {/* Card 4: Total Audit Events */}
+        {/* Card 4: Net Profit (EBITDA) */}
         <div className="bg-white rounded-3xl p-5 shadow-card border border-pharmacy-border/60 flex flex-col justify-between transition-all duration-300 hover:shadow-floating">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-pharmacy-textSecondary">
-              Total Audit Events
+              Net Profit
             </span>
             <div className="p-2 rounded-2xl bg-purple-50 text-purple-700">
               <Shield className="w-4 h-4" />
@@ -356,11 +450,13 @@ export default function ReportsPage() {
           </div>
           <div className="mt-3">
             <div className="text-3xl font-extrabold text-purple-950 tracking-tight">
-              {totalAuditEventsCount}
+              {formatCurrency(netProfit)}
             </div>
-            <div className="flex items-center gap-1.5 mt-1 text-[11px] font-semibold text-purple-800">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Immutable transactions logged</span>
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[11px] font-bold bg-purple-100 text-purple-800 border border-purple-200">
+                +{netMargin}% net profit
+              </span>
+              <span className="text-[11px] text-pharmacy-textMuted">after OpEx</span>
             </div>
           </div>
         </div>
@@ -466,8 +562,8 @@ export default function ReportsPage() {
         {activeTab === "sales" && (
           <div className="mt-5">
             <SalesProfitReport
-              summary={mockSalesSummary}
-              productRecords={mockProductProfitRecords}
+              summary={dynamicSalesSummary}
+              productRecords={dynamicProductRecords}
             />
           </div>
         )}
@@ -503,8 +599,8 @@ export default function ReportsPage() {
         onClose={() => setIsPrintModalOpen(false)}
         activeTab={activeTab}
         dateRange={dateRange}
-        salesSummary={mockSalesSummary}
-        productRecords={mockProductProfitRecords}
+        salesSummary={dynamicSalesSummary}
+        productRecords={dynamicProductRecords}
         inventoryItems={mockInventoryExpiryItems}
         supplierLedgers={mockSupplierLedgers}
         customerLedgers={mockCustomerLedgers}

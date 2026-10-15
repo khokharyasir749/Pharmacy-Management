@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Plus,
   Truck,
@@ -19,12 +20,17 @@ import SupplierListTable from "@/components/purchases/SupplierListTable";
 import CreatePurchaseOrderModal from "@/components/purchases/CreatePurchaseOrderModal";
 import RecordSupplierPaymentModal from "@/components/purchases/RecordSupplierPaymentModal";
 import AddSupplierModal from "@/components/purchases/AddSupplierModal";
-import { initialPurchaseOrders, initialSuppliers } from "@/data/mockPurchases";
+import { initialPurchaseOrders, initialSuppliers, getStoredPurchaseOrders, getStoredSuppliers } from "@/data/mockPurchases";
 import { PurchaseOrder, Supplier, SupplierPaymentRecord } from "@/types/purchase";
 
 export default function PurchasesPage() {
   const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>(initialPurchaseOrders);
   const [suppliers, setSuppliers] = useState<Supplier[]>(initialSuppliers);
+
+  useEffect(() => {
+    setPurchaseOrders(getStoredPurchaseOrders());
+    setSuppliers(getStoredSuppliers());
+  }, []);
 
   // Tabs: 'orders' | 'suppliers'
   const [activeTab, setActiveTab] = useState<"orders" | "suppliers">("orders");
@@ -155,26 +161,24 @@ export default function PurchasesPage() {
         {/* Action Toolbar */}
         <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
           {/* Secondary CTA: Add Supplier */}
-          <button
-            type="button"
-            onClick={() => setIsAddSupplierOpen(true)}
-            className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full border border-pharmacy-border bg-white hover:bg-pharmacy-canvas text-xs font-semibold text-pharmacy-textSecondary transition-all shadow-xs"
+          <Link
+            href="/purchases/suppliers/new"
+            className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full border border-pharmacy-border bg-white hover:bg-pharmacy-canvas text-xs font-semibold text-pharmacy-textSecondary transition-all shadow-xs cursor-pointer active:scale-95"
           >
             <Building2 className="w-3.5 h-3.5 text-teal-800" />
             <span>+ Add Supplier</span>
-          </button>
+          </Link>
 
           {/* Primary CTA: New Purchase Order */}
-          <button
-            type="button"
-            onClick={() => setIsCreatePOOpen(true)}
+          <Link
+            href="/purchases/new"
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-pharmacy-dark hover:bg-pharmacy-darkHover text-white font-medium text-sm shadow-pill hover:shadow-lg transition-all duration-200 group active:scale-95 cursor-pointer"
           >
             <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-white group-hover:rotate-90 transition-transform duration-200">
               <Plus className="w-3.5 h-3.5 stroke-[3]" />
             </div>
             <span>New Purchase Order</span>
-          </button>
+          </Link>
         </div>
       </div>
 

@@ -278,3 +278,59 @@ export const initialPurchaseOrders: PurchaseOrder[] = [
     notes: "Draft review awaiting manager authorization.",
   },
 ];
+
+export function getStoredSuppliers(): Supplier[] {
+  if (typeof window === "undefined") return initialSuppliers;
+  try {
+    const stored = localStorage.getItem("pms_suppliers_list");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    // ignore
+  }
+  return initialSuppliers;
+}
+
+export function saveSupplier(supplier: Supplier): Supplier[] {
+  const current = getStoredSuppliers();
+  const updated = [supplier, ...current.filter((s) => s.id !== supplier.id)];
+  initialSuppliers.unshift(supplier);
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem("pms_suppliers_list", JSON.stringify(updated));
+    } catch (e) {
+      // ignore
+    }
+  }
+  return updated;
+}
+
+export function getStoredPurchaseOrders(): PurchaseOrder[] {
+  if (typeof window === "undefined") return initialPurchaseOrders;
+  try {
+    const stored = localStorage.getItem("pms_po_list");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    // ignore
+  }
+  return initialPurchaseOrders;
+}
+
+export function savePurchaseOrder(po: PurchaseOrder): PurchaseOrder[] {
+  const current = getStoredPurchaseOrders();
+  const updated = [po, ...current.filter((p) => p.id !== po.id)];
+  initialPurchaseOrders.unshift(po);
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem("pms_po_list", JSON.stringify(updated));
+    } catch (e) {
+      // ignore
+    }
+  }
+  return updated;
+}
