@@ -453,11 +453,11 @@ export default function ProductCatalogTable({
       {/* Batch Details Modal Drawer */}
       {selectedBatchDetails && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-pharmacy-dark/40 backdrop-blur-sm animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
           onClick={() => setSelectedBatchDetails(null)}
         >
           <div
-            className="w-full max-w-2xl bg-white rounded-3xl shadow-floating border border-pharmacy-border p-6 space-y-4"
+            className="relative w-full max-w-2xl max-h-[90vh] flex flex-col bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden p-6 space-y-4"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-3 border-b border-pharmacy-borderLight">

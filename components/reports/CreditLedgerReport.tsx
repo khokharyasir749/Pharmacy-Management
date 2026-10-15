@@ -308,8 +308,14 @@ export default function CreditLedgerReport({
 
       {/* Statement Breakdown Preview Modal */}
       {selectedEntryForStatement && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-pharmacy-dark/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl w-full max-w-xl shadow-floating border border-pharmacy-border overflow-hidden flex flex-col max-h-[85vh]">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
+          onClick={() => setSelectedEntryForStatement(null)}
+        >
+          <div
+            className="relative w-full max-w-xl max-h-[90vh] flex flex-col bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="px-6 py-4 bg-pharmacy-canvas/60 border-b border-pharmacy-border flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-base text-pharmacy-dark">
