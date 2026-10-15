@@ -48,19 +48,19 @@ export default function DemoStateBanner() {
 
   if (isMinimized) {
     return (
-      <div className="mb-2 px-3.5 py-1.5 rounded-xl bg-slate-900 text-white text-[11px] font-medium flex items-center justify-between border border-slate-800 shadow-sm">
+      <div className="mb-2 px-3.5 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-normal flex items-center justify-between border border-slate-800 shadow-sm">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-bold text-slate-100">PMS v1.0.0</span>
-          <span className="text-slate-400">• Production Ready (AC-01 to AC-18 Verified)</span>
+          <span className="w-2 h-2 rounded-full bg-slate-400" />
+          <span className="font-medium text-slate-200">PMS v1.0.0</span>
+          <span className="text-slate-400">• Standard Release</span>
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setIsMinimized(false)}
-            className="text-[10px] font-bold underline text-teal-400 hover:text-white"
+            className="text-xs text-slate-300 hover:text-white"
           >
-            Expand Quick Navigator
+            Expand
           </button>
           <button
             type="button"
@@ -78,29 +78,29 @@ export default function DemoStateBanner() {
     <div className="mb-3 p-2.5 sm:px-4 sm:py-2.5 rounded-xl bg-slate-900 text-white text-xs border border-slate-800 shadow-sm">
       {/* Toast Alert */}
       {toast && (
-        <div className="mb-2 p-2 rounded-lg bg-teal-950 border border-teal-700/60 text-[11px] text-teal-200 flex items-center gap-1.5">
-          <CheckCircle2 className="w-3.5 h-3.5 text-teal-400" />
+        <div className="mb-2 p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-200 flex items-center gap-2">
+          <CheckCircle2 className="w-3.5 h-3.5 text-slate-300" />
           <span>{toast}</span>
         </div>
       )}
 
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
-        {/* Left: Badge & Status */}
+        {/* Left: Standard System Status */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold">
-            <ShieldCheck className="w-3 h-3 text-emerald-400" />
-            <span>AC-01 to AC-18 PASSED</span>
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700 text-[10px] font-medium">
+            <ShieldCheck className="w-3 h-3 text-slate-400" />
+            <span>AC-01 to AC-18 Verified</span>
           </div>
-          <span className="font-bold text-white text-[11px] hidden sm:inline">
-            Pharmacy Management System (PMS)
+          <span className="font-semibold text-slate-200 text-xs hidden sm:inline">
+            Pharmacy Management System
           </span>
-          <span className="text-teal-300/80 text-[11px] hidden md:inline">
-            v1.0.0 Enterprise Release
+          <span className="text-slate-400 text-xs hidden md:inline">
+            • v1.0.0
           </span>
         </div>
 
         {/* Center: Module Quick Links */}
-        <div className="flex items-center gap-1 overflow-x-auto pb-1 lg:pb-0 scrollbar-none text-[11px]">
+        <div className="flex items-center gap-1 overflow-x-auto pb-1 lg:pb-0 scrollbar-none text-xs">
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isCurrent =
@@ -113,13 +113,13 @@ export default function DemoStateBanner() {
                 key={link.label}
                 href={link.href}
                 prefetch={true}
-                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full whitespace-nowrap transition-all ${
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors ${
                   isCurrent
-                    ? "bg-emerald-400 text-teal-950 font-bold shadow-xs"
-                    : "text-teal-100 hover:text-white hover:bg-white/10"
+                    ? "bg-white/10 text-white font-medium"
+                    : "text-slate-300 hover:text-white hover:bg-white/5 font-normal"
                 }`}
               >
-                <Icon className="w-3 h-3" />
+                <Icon className="w-3.5 h-3.5 text-slate-400" />
                 <span>{link.label}</span>
               </Link>
             );
@@ -131,17 +131,17 @@ export default function DemoStateBanner() {
           <button
             type="button"
             onClick={handleResetDemo}
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-teal-100 hover:text-white text-[10px] font-semibold transition-all border border-white/15"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium transition-colors border border-slate-700"
             title="Reset system state to clean demonstration baseline"
           >
-            <RotateCcw className="w-3 h-3 text-emerald-300" />
-            <span>Reload Baseline</span>
+            <RotateCcw className="w-3 h-3 text-slate-400" />
+            <span>Reset Demo</span>
           </button>
 
           <button
             type="button"
             onClick={() => setIsMinimized(true)}
-            className="p-1 rounded-lg hover:bg-white/10 text-teal-300 hover:text-white transition-colors text-[10px]"
+            className="p-1 rounded-md hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
             title="Minimize Bar"
           >
             <ChevronDown className="w-3.5 h-3.5" />
@@ -150,7 +150,7 @@ export default function DemoStateBanner() {
           <button
             type="button"
             onClick={() => setIsVisible(false)}
-            className="p-1 rounded-lg hover:bg-white/10 text-teal-300 hover:text-white transition-colors"
+            className="p-1 rounded-md hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
             title="Dismiss Bar"
           >
             <X className="w-3.5 h-3.5" />
