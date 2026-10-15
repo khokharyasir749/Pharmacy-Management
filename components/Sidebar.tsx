@@ -43,7 +43,7 @@ const navSections: NavSection[] = [
     title: "MAIN MENU",
     collapsible: false,
     items: [
-      { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+      { name: "Dashboard", href: "/", icon: LayoutDashboard },
       { name: "Products", href: "/products", icon: Package },
       { name: "Categories", href: "/categories", icon: LayoutGrid },
     ],
@@ -53,7 +53,7 @@ const navSections: NavSection[] = [
     collapsible: true,
     defaultExpanded: true,
     items: [
-      { name: "Orders", href: "/", icon: ShoppingCart },
+      { name: "Orders", href: "/orders", icon: ShoppingCart },
       { name: "Purchases", href: "/purchases", icon: Truck },
       { name: "Sales", href: "/sales", icon: TrendingUp },
       { name: "Customers", href: "/customers", icon: Users },
@@ -172,9 +172,14 @@ export default function Sidebar({ isOpen, onClose, activePath: propActivePath }:
                     <ul className="space-y-1.5 pt-1">
                       {section.items.map((item) => {
                         const Icon = item.icon;
+                        const isDashboard =
+                          item.name === "Dashboard" &&
+                          (currentActive === "/" || currentActive === "/dashboard");
                         const isActive =
-                          currentActive === item.href ||
-                          (item.href !== "/" && currentActive.startsWith(`${item.href}/`));
+                          isDashboard ||
+                          (item.href !== "/" &&
+                            (currentActive === item.href ||
+                              currentActive.startsWith(`${item.href}/`)));
 
                         return (
                           <li key={item.name}>

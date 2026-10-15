@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   ChevronRight,
   ChevronDown,
+  LayoutDashboard,
 } from "lucide-react";
 
 export default function DemoStateBanner() {
@@ -26,7 +27,7 @@ export default function DemoStateBanner() {
   const [toast, setToast] = useState<string | null>(null);
 
   const navLinks = [
-    { label: "Orders POS", href: "/", icon: ShoppingCart },
+    { label: "Dashboard", href: "/", icon: LayoutDashboard },
     { label: "Catalog", href: "/products", icon: Package },
     { label: "Purchasing", href: "/purchases", icon: Truck },
     { label: "Cash Register", href: "/payments", icon: CreditCard },
