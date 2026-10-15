@@ -108,7 +108,7 @@ export default function Sidebar({ isOpen, onClose, activePath: propActivePath }:
         <div className="flex flex-col">
           {/* Logo / Brand Header */}
           <div className="flex items-center justify-between pb-8">
-            <Link href="/" className="flex items-center gap-3 group">
+            <Link href="/" prefetch={true} className="flex items-center gap-3 group">
               {/* Circular Pharmacy Plus Icon */}
               <div className="relative w-10 h-10 rounded-full bg-pharmacy-textPrimary flex items-center justify-center text-white shadow-sm ring-4 ring-pharmacy-textPrimary/10 group-hover:scale-105 transition-transform duration-200">
                 <svg
@@ -185,6 +185,7 @@ export default function Sidebar({ isOpen, onClose, activePath: propActivePath }:
                           <li key={item.name}>
                             <Link
                               href={item.href}
+                              prefetch={true}
                               onClick={onClose}
                               className={`group relative flex items-center gap-3.5 px-4 py-3 rounded-full text-sm font-medium transition-all duration-200 ${
                                 isActive

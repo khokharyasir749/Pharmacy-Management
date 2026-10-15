@@ -124,6 +124,7 @@ export default function DemoStateBanner() {
               <Link
                 key={link.label}
                 href={link.href}
+                prefetch={true}
                 className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full whitespace-nowrap transition-all ${
                   isCurrent
                     ? "bg-emerald-400 text-teal-950 font-bold shadow-xs"
