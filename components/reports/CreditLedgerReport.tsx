@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import ModalPortal from "@/components/common/ModalPortal";
 import {
   Search,
   Building2,
@@ -307,13 +308,10 @@ export default function CreditLedgerReport({
       </div>
 
       {/* Statement Breakdown Preview Modal */}
-      {selectedEntryForStatement && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
-          onClick={() => setSelectedEntryForStatement(null)}
-        >
+      <ModalPortal isOpen={!!selectedEntryForStatement} onClose={() => setSelectedEntryForStatement(null)}>
+        {selectedEntryForStatement && (
           <div
-            className="relative w-full max-w-xl max-h-[90vh] flex flex-col bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden"
+            className="relative w-full max-w-xl max-h-[85vh] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-6 py-4 bg-pharmacy-canvas/60 border-b border-pharmacy-border flex items-center justify-between">
@@ -413,8 +411,8 @@ export default function CreditLedgerReport({
               </button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </ModalPortal>
     </div>
   );
 }

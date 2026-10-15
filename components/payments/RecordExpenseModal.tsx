@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import ModalPortal from "@/components/common/ModalPortal";
 import {
   X,
   Receipt,
@@ -143,12 +144,9 @@ export default function RecordExpenseModal({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
-      onClick={onClose}
-    >
+    <ModalPortal isOpen={isOpen} onClose={onClose}>
       <div
-        className="relative w-full max-w-xl max-h-[90vh] flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 animate-in zoom-in-95 duration-150"
+        className="relative w-full max-w-xl max-h-[85vh] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header (fixed top) */}
@@ -405,6 +403,6 @@ export default function RecordExpenseModal({
           </div>
         </form>
       </div>
-    </div>
+    </ModalPortal>
   );
 }

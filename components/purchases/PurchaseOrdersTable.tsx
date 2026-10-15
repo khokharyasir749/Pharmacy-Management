@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import ModalPortal from "@/components/common/ModalPortal";
 import {
   Search,
   Filter,
@@ -313,13 +314,10 @@ export default function PurchaseOrdersTable({
       </div>
 
       {/* Invoice Details Dialog Modal */}
-      {selectedPO && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
-          onClick={() => setSelectedPO(null)}
-        >
+      <ModalPortal isOpen={!!selectedPO} onClose={() => setSelectedPO(null)}>
+        {selectedPO && (
           <div
-            className="relative w-full max-w-2xl max-h-[90vh] flex flex-col bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden p-6 space-y-4"
+            className="relative w-full max-w-2xl max-h-[85vh] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-3 border-b border-pharmacy-borderLight">
@@ -393,8 +391,8 @@ export default function PurchaseOrdersTable({
               </button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </ModalPortal>
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import ModalPortal from "@/components/common/ModalPortal";
 import {
   X,
   CheckCircle2,
@@ -127,12 +128,9 @@ export default function CloseRegisterModal({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
-      onClick={onClose}
-    >
+    <ModalPortal isOpen={isOpen} onClose={onClose}>
       <div
-        className="relative w-full max-w-2xl max-h-[90vh] flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 animate-in zoom-in-95 duration-150"
+        className="relative w-full max-w-2xl max-h-[85vh] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header (fixed top) */}
@@ -488,7 +486,7 @@ export default function CloseRegisterModal({
             </form>
           )}
         </div>
-      </div>
+      </ModalPortal>
     );
   }
 
