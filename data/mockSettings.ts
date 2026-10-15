@@ -1,0 +1,245 @@
+import {
+  BusinessProfile,
+  UserAccount,
+  RolePermission,
+  ReceiptSettings,
+  BackupSnapshot,
+  SecurityPolicies,
+} from "@/types/settings";
+
+export const initialBusinessProfile: BusinessProfile = {
+  pharmacyName: "Shifa Pharmacy & General Store",
+  branchIdentifier: "Main Retail Branch - Lahore",
+  drugLicenseNumber: "DL-PB-2024-8849",
+  ntnNumber: "NTN-7419203-1",
+  operatingCurrency: "PKR (Rs.)",
+  timezone: "Asia/Karachi (PKT - UTC+5)",
+  phone: "+92 42 35889901",
+  email: "support@shifapharmacy.pk",
+  address: "Plot 42-B, Commercial Zone, Gulberg III, Lahore, Punjab",
+  operatingHours: "24/7 Round the Clock Dispensary",
+  invoicePrefix: "PMS-2026-",
+};
+
+export const initialUsers: UserAccount[] = [
+  {
+    id: "usr-001",
+    name: "Dr. Sarah Alvi",
+    email: "sarah.alvi@shifapharmacy.pk",
+    avatar:
+      "https://images.unsplash.com/photo-1594824813589-a292357ef35c?auto=format&fit=crop&w=150&q=80",
+    role: "Super Admin",
+    branch: "All Branches (Global Admin)",
+    isActive: true,
+    lastLogin: "Oct 15, 2026, 09:42 AM PKT",
+    phone: "+92 300 9182341",
+  },
+  {
+    id: "usr-002",
+    name: "Budiono Siregar",
+    email: "b.siregar@shifapharmacy.pk",
+    avatar:
+      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+    role: "Pharmacist",
+    branch: "Counter 1 - Main Branch",
+    isActive: true,
+    lastLogin: "Oct 15, 2026, 08:00 AM PKT",
+    phone: "+92 321 4455667",
+  },
+  {
+    id: "usr-003",
+    name: "Ayesha Malik",
+    email: "ayesha.malik@shifapharmacy.pk",
+    avatar:
+      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80",
+    role: "Pharmacy Manager",
+    branch: "Counter 1 & 2 (Branch Incharge)",
+    isActive: true,
+    lastLogin: "Oct 14, 2026, 06:15 PM PKT",
+    phone: "+92 333 7788990",
+  },
+  {
+    id: "usr-004",
+    name: "Tariq Mahmood",
+    email: "t.mahmood@shifapharmacy.pk",
+    avatar:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
+    role: "Inventory Staff",
+    branch: "Central Warehouse & Cold Room",
+    isActive: true,
+    lastLogin: "Oct 14, 2026, 05:10 PM PKT",
+    phone: "+92 345 1122334",
+  },
+  {
+    id: "usr-005",
+    name: "Zainab Fatima",
+    email: "z.fatima@shifapharmacy.pk",
+    avatar:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
+    role: "Cashier",
+    branch: "Counter 2 - Express Lane",
+    isActive: true,
+    lastLogin: "Oct 15, 2026, 08:30 AM PKT",
+    phone: "+92 312 9988776",
+  },
+  {
+    id: "usr-006",
+    name: "Bilal Hassan",
+    email: "b.hassan@shifapharmacy.pk",
+    avatar:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80",
+    role: "Accountant",
+    branch: "Finance & Accounts Office",
+    isActive: false,
+    lastLogin: "Oct 11, 2026, 04:00 PM PKT",
+    phone: "+92 301 2233445",
+  },
+];
+
+export const rbacMatrix: RolePermission[] = [
+  {
+    role: "Super Admin",
+    badgeColor: "bg-purple-100 text-purple-900 border-purple-300",
+    description: "Full unchecked administrative control over all stores, finances, users, and database recovery.",
+    permissions: {
+      viewCatalog: true,
+      viewCostPrice: true,
+      stockAdjustment: true,
+      refundApproval: true,
+      closeRegister: true,
+      userAdmin: true,
+      viewReports: true,
+      databaseBackup: true,
+    },
+  },
+  {
+    role: "Pharmacy Manager",
+    badgeColor: "bg-teal-100 text-teal-900 border-teal-300",
+    description: "Operational store manager; can approve refunds, override prices, and view profit margins.",
+    permissions: {
+      viewCatalog: true,
+      viewCostPrice: true,
+      stockAdjustment: true,
+      refundApproval: true,
+      closeRegister: true,
+      userAdmin: false,
+      viewReports: true,
+      databaseBackup: false,
+    },
+  },
+  {
+    role: "Pharmacist",
+    badgeColor: "bg-emerald-100 text-emerald-900 border-emerald-300",
+    description: "Clinical dispensary specialist; manages prescriptions, counter sales, and customer consultations.",
+    permissions: {
+      viewCatalog: true,
+      viewCostPrice: false,
+      stockAdjustment: true,
+      refundApproval: false,
+      closeRegister: true,
+      userAdmin: false,
+      viewReports: false,
+      databaseBackup: false,
+    },
+  },
+  {
+    role: "Cashier",
+    badgeColor: "bg-blue-100 text-blue-900 border-blue-300",
+    description: "Counter sales operator; processes customer checkouts, opens/closes assigned cash drawer.",
+    permissions: {
+      viewCatalog: true,
+      viewCostPrice: false,
+      stockAdjustment: false,
+      refundApproval: false,
+      closeRegister: true,
+      userAdmin: false,
+      viewReports: false,
+      databaseBackup: false,
+    },
+  },
+  {
+    role: "Inventory Staff",
+    badgeColor: "bg-amber-100 text-amber-900 border-amber-300",
+    description: "Warehouse & procurement handler; receives goods (GRN), audits stock, and logs batch expiry.",
+    permissions: {
+      viewCatalog: true,
+      viewCostPrice: true,
+      stockAdjustment: true,
+      refundApproval: false,
+      closeRegister: false,
+      userAdmin: false,
+      viewReports: false,
+      databaseBackup: false,
+    },
+  },
+  {
+    role: "Accountant",
+    badgeColor: "bg-indigo-100 text-indigo-900 border-indigo-300",
+    description: "Financial reconciler; audits tax records, supplier ledgers, and profit & loss statements.",
+    permissions: {
+      viewCatalog: true,
+      viewCostPrice: true,
+      stockAdjustment: false,
+      refundApproval: false,
+      closeRegister: false,
+      userAdmin: false,
+      viewReports: true,
+      databaseBackup: false,
+    },
+  },
+];
+
+export const initialReceiptSettings: ReceiptSettings = {
+  paperWidth: "80mm Standard",
+  headerMessage: "Thank you for choosing Shifa Pharmacy! Your health is our priority.",
+  footerMessage: "Non-refrigerated medicines returnable within 3 days with original invoice. Keep cool & dry.",
+  showQrCode: true,
+  showBarcode: true,
+  autoCutPaper: true,
+  cashDrawerPulse: true,
+  showGenericFormula: true,
+  showPharmacistLicense: true,
+};
+
+export const initialBackupSnapshots: BackupSnapshot[] = [
+  {
+    id: "BKP-20261015-020000",
+    timestamp: "Oct 15, 2026, 02:00 AM PKT",
+    size: "24.8 MB",
+    targetStorage: "Secure Cloud Bucket - Encrypted AES-256 (Asia-South1)",
+    status: "Verified Restorable",
+    checksum: "sha256:7f9a12c84d1e2b9987f0",
+  },
+  {
+    id: "BKP-20261014-020000",
+    timestamp: "Oct 14, 2026, 02:00 AM PKT",
+    size: "24.2 MB",
+    targetStorage: "Secure Cloud Bucket - Encrypted AES-256 (Asia-South1)",
+    status: "Verified Restorable",
+    checksum: "sha256:6e8b41a93c0d1e8876e9",
+  },
+  {
+    id: "BKP-20261013-020000",
+    timestamp: "Oct 13, 2026, 02:00 AM PKT",
+    size: "23.9 MB",
+    targetStorage: "Secure Cloud Bucket - Encrypted AES-256 (Asia-South1)",
+    status: "Verified Restorable",
+    checksum: "sha256:5d7a30b82b9c0d7765d8",
+  },
+  {
+    id: "BKP-20261012-020000",
+    timestamp: "Oct 12, 2026, 02:00 AM PKT",
+    size: "23.5 MB",
+    targetStorage: "Secure Cloud Bucket - Encrypted AES-256 (Asia-South1)",
+    status: "Verified Restorable",
+    checksum: "sha256:4c6920a71a8b9c6654c7",
+  },
+];
+
+export const initialSecurityPolicies: SecurityPolicies = {
+  sessionTimeoutMinutes: 30,
+  enforce2FA: true,
+  lockoutAttempts: 3,
+  backupFrequency: "Daily at 02:00 AM PKT",
+  autoLogoffOnIdle: true,
+};

@@ -172,7 +172,9 @@ export default function Sidebar({ isOpen, onClose, activePath: propActivePath }:
                     <ul className="space-y-1.5 pt-1">
                       {section.items.map((item) => {
                         const Icon = item.icon;
-                        const isActive = currentActive === item.href;
+                        const isActive =
+                          currentActive === item.href ||
+                          (item.href !== "/" && currentActive.startsWith(`${item.href}/`));
 
                         return (
                           <li key={item.name}>
