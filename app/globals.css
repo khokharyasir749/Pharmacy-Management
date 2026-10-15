@@ -3,13 +3,19 @@
 @tailwind utilities;
 
 :root {
-  --background: #edf5f3;
-  --foreground: #0d2c28;
+  --background: #F4F7F6;
+  --foreground: #1e293b;
 }
 
+html,
 body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #F4F7F6;
   color: var(--foreground);
-  background: var(--background);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

@@ -337,7 +337,7 @@ export default function Header({ onOpenMobileMenu }: HeaderProps) {
   };
 
   return (
-    <header className="w-full flex items-center justify-between gap-4 py-4 px-2 sm:px-4">
+    <header className="w-full flex items-center justify-between gap-4 py-4 px-6 lg:px-8">
       {/* Left: Mobile hamburger menu trigger */}
       <div className="flex items-center gap-3 lg:hidden">
         <button

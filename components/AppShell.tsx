@@ -19,25 +19,21 @@ export default function AppShell({ children }: AppShellProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#E9F3F1] text-pharmacy-textPrimary p-2 sm:p-4 md:p-6 lg:p-7 flex flex-col justify-center">
-      {/* Outer rounded desktop frame matching the modern Dribbble presentation */}
-      <div className="w-full max-w-[1600px] mx-auto min-h-[92vh] bg-pharmacy-canvas rounded-3xl md:rounded-[36px] shadow-floating border border-white/60 overflow-hidden flex flex-col lg:flex-row backdrop-blur-sm">
-        {/* Left Sidebar */}
+    <div className="min-h-screen w-full flex bg-[#F4F7F6] text-slate-800 antialiased overflow-x-hidden">
+      {/* Left Fixed/Sticky Sidebar */}
+      <aside className="w-64 flex-shrink-0 min-h-screen bg-white border-r border-slate-200/80">
         <Sidebar
           isOpen={mobileMenuOpen}
           onClose={() => setMobileMenuOpen(false)}
         />
+      </aside>
 
-        {/* Right Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0 px-4 sm:px-6 lg:px-8 py-5">
-          {/* Topbar Header */}
-          <Header onOpenMobileMenu={() => setMobileMenuOpen(true)} />
-
-          {/* Page Content Body */}
-          <main className="flex-1 mt-3 sm:mt-5 overflow-y-auto">
-            {children}
-          </main>
-        </div>
+      {/* Right Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+        <Header onOpenMobileMenu={() => setMobileMenuOpen(true)} />
+        <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
+          {children}
+        </main>
       </div>
     </div>
   );

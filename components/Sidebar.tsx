@@ -100,10 +100,10 @@ export default function Sidebar({ isOpen, onClose, activePath: propActivePath }:
       )}
 
       {/* Sidebar Container */}
-      <aside
-        className={`fixed lg:static top-0 left-0 z-50 h-screen lg:h-auto w-64 flex-shrink-0 flex flex-col justify-between p-6 transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        } bg-pharmacy-canvas lg:bg-transparent`}
+      <div
+        className={`fixed lg:static top-0 left-0 z-50 h-screen lg:h-full w-64 lg:w-full flex-shrink-0 flex flex-col justify-between p-6 transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
+        } bg-white`}
       >
         <div className="flex flex-col">
           {/* Logo / Brand Header */}
@@ -233,7 +233,7 @@ export default function Sidebar({ isOpen, onClose, activePath: propActivePath }:
             </span>
           </div>
         </div>
-      </aside>
+      </div>
     </>
   );
 }
