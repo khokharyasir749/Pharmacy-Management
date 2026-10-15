@@ -9,7 +9,6 @@ import {
   Scissors,
   Wallet,
   CheckCircle2,
-  Sparkles,
   Smartphone,
   Info,
 } from "lucide-react";

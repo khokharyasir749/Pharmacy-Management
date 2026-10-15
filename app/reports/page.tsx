@@ -15,7 +15,6 @@ import {
   CheckCircle2,
   X,
   Clock,
-  Sparkles,
 } from "lucide-react";
 import SalesProfitReport from "@/components/reports/SalesProfitReport";
 import InventoryExpiryReport from "@/components/reports/InventoryExpiryReport";

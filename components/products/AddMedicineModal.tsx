@@ -9,7 +9,6 @@ import {
   Barcode,
   Calendar,
   Layers,
-  Sparkles,
 } from "lucide-react";
 import { Product, ProductCategory, DosageForm } from "@/types/product";
 
@@ -163,24 +162,24 @@ export default function AddMedicineModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 overflow-y-auto bg-pharmacy-dark/50 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-4xl bg-white rounded-3xl md:rounded-[32px] shadow-2xl border border-pharmacy-border/60 overflow-hidden flex flex-col max-h-[92vh] animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-4xl max-h-[90vh] flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden my-auto border border-slate-200 animate-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-pharmacy-borderLight bg-pharmacy-canvas/30">
+        {/* Header (fixed top) */}
+        <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-white flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-pharmacy-dark flex items-center justify-center text-white shadow-sm">
-              <Pill className="w-5 h-5 text-emerald-300" />
+            <div className="w-10 h-10 rounded-xl bg-teal-700 flex items-center justify-center text-white shadow-sm">
+              <Pill className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-bold tracking-tight text-pharmacy-dark">
+              <h2 className="text-lg font-bold tracking-tight text-slate-800">
                 Add New Medicine
               </h2>
-              <p className="text-xs text-pharmacy-textMuted">
+              <p className="text-xs text-slate-500">
                 Define formulation, multi-unit conversions, reorder triggers, and initial batch
               </p>
             </div>
@@ -189,7 +188,8 @@ export default function AddMedicineModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-full text-pharmacy-textMuted hover:text-pharmacy-textPrimary hover:bg-pharmacy-canvas transition-colors"
+            className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            aria-label="Close modal"
           >
             <X className="w-5 h-5 stroke-[2.2]" />
           </button>
@@ -197,14 +197,16 @@ export default function AddMedicineModal({
 
         {/* Validation Error Banner */}
         {errorMessage && (
-          <div className="mx-6 mt-4 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2">
+          <div className="mx-6 mt-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 flex-shrink-0 text-rose-600" />
             <span>{errorMessage}</span>
           </div>
         )}
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
+        {/* Form Container */}
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+          {/* Scrollable Form Body */}
+          <div className="p-6 overflow-y-auto flex-1 space-y-6">
           {/* Section 1: Basic Formulation */}
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-pharmacy-textSecondary pb-2 border-b border-pharmacy-borderLight">
@@ -490,21 +492,23 @@ export default function AddMedicineModal({
             </div>
           </div>
 
-          {/* Footer Actions */}
-          <div className="pt-4 border-t border-pharmacy-borderLight flex items-center justify-end gap-3">
+          </div>
+
+          {/* Sticky Footer CTA */}
+          <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 flex-shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-full border border-pharmacy-border bg-white text-xs sm:text-sm font-semibold text-pharmacy-textSecondary hover:bg-pharmacy-canvas"
+              className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-xs sm:text-sm font-semibold text-slate-700 transition-colors"
             >
               Cancel
             </button>
 
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-full bg-pharmacy-dark hover:bg-pharmacy-darkHover text-white text-xs sm:text-sm font-semibold shadow-pill flex items-center gap-2"
+              className="px-5 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs sm:text-sm font-semibold shadow-sm hover:shadow flex items-center gap-2 transition-colors active:scale-95"
             >
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-300" />
               <span>Save & Allocate Medicine</span>
             </button>
           </div>

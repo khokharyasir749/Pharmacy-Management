@@ -16,7 +16,7 @@ import {
   Barcode,
   Calendar,
   Layers,
-  Sparkles,
+  ShoppingCart,
 } from "lucide-react";
 import { OrderItem, PaymentMethod } from "@/types/order";
 import { mockInventory, mockCustomers, InventoryItem } from "@/data/mockInventory";
@@ -211,25 +211,25 @@ export default function CreateOrderModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 overflow-y-auto bg-pharmacy-dark/50 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
       onClick={onClose}
     >
       {/* Modal Dialog Card */}
       <div
-        className="relative w-full max-w-5xl bg-white rounded-3xl md:rounded-[32px] shadow-2xl border border-pharmacy-border/60 overflow-hidden flex flex-col max-h-[92vh] animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-5xl max-h-[90vh] flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden my-auto border border-slate-200 animate-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-pharmacy-borderLight bg-pharmacy-canvas/30">
+        {/* Modal Header (fixed top) */}
+        <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-white flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-pharmacy-dark flex items-center justify-center text-white shadow-sm">
-              <Sparkles className="w-5 h-5 text-emerald-300" />
+            <div className="w-10 h-10 rounded-xl bg-teal-700 flex items-center justify-center text-white shadow-sm">
+              <ShoppingCart className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-bold tracking-tight text-pharmacy-dark">
+              <h2 className="text-lg font-bold tracking-tight text-slate-800">
                 Create New Order
               </h2>
-              <p className="text-xs text-pharmacy-textMuted">
+              <p className="text-xs text-slate-500">
                 Allocate FEFO batches, verify retail stock, and finalize customer payment
               </p>
             </div>
@@ -238,7 +238,7 @@ export default function CreateOrderModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-full text-pharmacy-textMuted hover:text-pharmacy-textPrimary hover:bg-pharmacy-canvas transition-colors"
+            className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
             aria-label="Close modal"
           >
             <X className="w-5 h-5 stroke-[2.2]" />
@@ -247,7 +247,7 @@ export default function CreateOrderModal({
 
         {/* Validation Banner if any */}
         {errorMessage && (
-          <div className="mx-6 mt-4 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2 animate-in fade-in duration-150">
+          <div className="mx-6 mt-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 flex-shrink-0 text-rose-600" />
             <span>{errorMessage}</span>
           </div>
@@ -615,12 +615,12 @@ export default function CreateOrderModal({
           </div>
         </div>
 
-        {/* Modal Footer Actions */}
-        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-pharmacy-borderLight bg-pharmacy-canvas/30">
+        {/* Sticky Footer CTA */}
+        <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 flex-shrink-0">
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 rounded-full border border-pharmacy-border bg-white hover:bg-pharmacy-canvas text-xs sm:text-sm font-semibold text-pharmacy-textSecondary transition-colors"
+            className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-xs sm:text-sm font-semibold text-slate-700 transition-colors"
           >
             Cancel
           </button>
@@ -629,9 +629,9 @@ export default function CreateOrderModal({
             type="button"
             onClick={handleConfirmOrder}
             disabled={cartItems.length === 0}
-            className="px-6 py-2.5 rounded-full bg-pharmacy-dark hover:bg-pharmacy-darkHover text-white text-xs sm:text-sm font-semibold shadow-pill hover:shadow-lg disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 transition-all active:scale-95"
+            className="px-5 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs sm:text-sm font-semibold shadow-sm hover:shadow disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 transition-colors active:scale-95"
           >
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-300" />
             <span>Confirm & Create Order</span>
           </button>
         </div>

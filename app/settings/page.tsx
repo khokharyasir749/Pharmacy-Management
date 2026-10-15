@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   X,
   ShieldCheck,
-  Sparkles,
   Lock,
   Clock,
   HardDrive,

@@ -15,7 +15,6 @@ import {
   DollarSign,
   ChevronDown,
   Check,
-  Sparkles,
 } from "lucide-react";
 import { PurchaseOrder, POStatus } from "@/types/purchase";
 

@@ -10,7 +10,6 @@ import {
   TrendingUp,
   CheckCircle2,
   X,
-  Sparkles,
 } from "lucide-react";
 import ProductCatalogTable from "@/components/products/ProductCatalogTable";
 import AddMedicineModal from "@/components/products/AddMedicineModal";

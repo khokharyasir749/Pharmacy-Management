@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Sparkles,
   CheckCircle2,
   X,
   RotateCcw,
@@ -15,7 +14,6 @@ import {
   FileText,
   Settings,
   ShieldCheck,
-  ChevronRight,
   ChevronDown,
   LayoutDashboard,
 } from "lucide-react";
@@ -45,39 +43,29 @@ export default function DemoStateBanner() {
   };
 
   if (!isVisible) {
-    return (
-      <button
-        type="button"
-        onClick={() => setIsVisible(true)}
-        className="fixed bottom-4 right-4 z-50 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-pharmacy-dark text-white text-xs font-semibold shadow-floating hover:bg-pharmacy-darkHover transition-all"
-        title="Open Reviewer Quick Demo Bar"
-      >
-        <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
-        <span>PMS Demo Helper</span>
-      </button>
-    );
+    return null;
   }
 
   if (isMinimized) {
     return (
-      <div className="mb-2 px-3 py-1.5 rounded-2xl bg-teal-900/90 text-white text-[11px] font-medium flex items-center justify-between shadow-xs">
+      <div className="mb-2 px-3.5 py-1.5 rounded-xl bg-slate-900 text-white text-[11px] font-medium flex items-center justify-between border border-slate-800 shadow-sm">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-bold">PMS v1.0.0</span>
-          <span className="text-teal-200">• Production Ready (AC-01 to AC-18 Verified)</span>
+          <span className="font-bold text-slate-100">PMS v1.0.0</span>
+          <span className="text-slate-400">• Production Ready (AC-01 to AC-18 Verified)</span>
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setIsMinimized(false)}
-            className="text-[10px] font-bold underline text-emerald-300 hover:text-white"
+            className="text-[10px] font-bold underline text-teal-400 hover:text-white"
           >
             Expand Quick Navigator
           </button>
           <button
             type="button"
             onClick={() => setIsVisible(false)}
-            className="text-teal-300 hover:text-white"
+            className="text-slate-400 hover:text-white"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -87,11 +75,11 @@ export default function DemoStateBanner() {
   }
 
   return (
-    <div className="mb-3 p-2.5 sm:px-4 sm:py-2.5 rounded-2xl bg-gradient-to-r from-teal-950 via-teal-900 to-emerald-950 text-white text-xs shadow-card border border-teal-700/40 animate-in fade-in duration-200">
+    <div className="mb-3 p-2.5 sm:px-4 sm:py-2.5 rounded-xl bg-slate-900 text-white text-xs border border-slate-800 shadow-sm">
       {/* Toast Alert */}
       {toast && (
-        <div className="mb-2 p-2 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-[11px] text-emerald-200 flex items-center gap-1.5">
-          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-300" />
+        <div className="mb-2 p-2 rounded-lg bg-teal-950 border border-teal-700/60 text-[11px] text-teal-200 flex items-center gap-1.5">
+          <CheckCircle2 className="w-3.5 h-3.5 text-teal-400" />
           <span>{toast}</span>
         </div>
       )}

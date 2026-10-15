@@ -12,7 +12,6 @@ import {
   Edit2,
   Archive,
   Pill,
-  Sparkles,
   Calendar,
   DollarSign,
   TrendingUp,

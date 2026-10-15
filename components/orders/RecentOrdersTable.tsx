@@ -16,7 +16,7 @@ import {
   CreditCard,
   Building2,
   Banknote,
-  Sparkles,
+  CheckCircle2,
 } from "lucide-react";
 import { OrderItem } from "@/types/order";
 import { initialOrders } from "@/data/mockOrders";
@@ -217,9 +217,9 @@ export default function RecentOrdersTable({
 
       {/* Bulk Action Banner (when rows selected) */}
       {selectedOrderIds.length > 0 && (
-        <div className="mt-3 px-4 py-2.5 rounded-2xl bg-pharmacy-mintLight/70 border border-teal-200/50 flex items-center justify-between text-xs text-pharmacy-textPrimary animate-in fade-in duration-200">
+        <div className="mt-3 px-4 py-2.5 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-between text-xs text-slate-800 animate-in fade-in duration-150">
           <span className="font-semibold flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-teal-700" />
+            <CheckCircle2 className="w-4 h-4 text-teal-700" />
             {selectedOrderIds.length} order{selectedOrderIds.length > 1 ? "s" : ""} selected
           </span>
           <div className="flex items-center gap-2">

@@ -16,7 +16,6 @@ import {
   TrendingUp,
   AlertCircle,
   Clock,
-  Sparkles,
 } from "lucide-react";
 import RegisterSessionsTable from "@/components/payments/RegisterSessionsTable";
 import ExpensesTable from "@/components/payments/ExpensesTable";

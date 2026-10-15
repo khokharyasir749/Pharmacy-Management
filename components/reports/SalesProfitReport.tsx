@@ -10,7 +10,6 @@ import {
   ArrowDownRight,
   Percent,
   Layers,
-  Sparkles,
   PieChart,
 } from "lucide-react";
 import { SalesProfitSummary, ProductProfitRecord } from "@/types/report";
