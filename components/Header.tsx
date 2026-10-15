@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Search,
   Mic,
@@ -9,18 +11,62 @@ import {
   Globe,
   ChevronDown,
   Menu,
+  Settings,
+  LogOut,
+  Monitor,
 } from "lucide-react";
+import { getActiveUser, logoutUser, AuthUser, DEFAULT_ADMIN_USER } from "@/data/auth";
 
 interface HeaderProps {
   onOpenMobileMenu?: () => void;
 }
 
 export default function Header({ onOpenMobileMenu }: HeaderProps) {
+  const router = useRouter();
   const [searchValue, setSearchValue] = useState("");
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("EN");
   const [hasUnreadNotification, setHasUnreadNotification] = useState(true);
   const [imgError, setImgError] = useState(false);
+
+  // User Profile State & Dropdown
+  const [user, setUser] = useState<AuthUser>(DEFAULT_ADMIN_USER);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+  const languageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setUser(getActiveUser());
+    const handleAuthChange = () => {
+      setUser(getActiveUser());
+    };
+    window.addEventListener("pms_auth_changed", handleAuthChange);
+    window.addEventListener("storage", handleAuthChange);
+    return () => {
+      window.removeEventListener("pms_auth_changed", handleAuthChange);
+      window.removeEventListener("storage", handleAuthChange);
+    };
+  }, []);
+
+  // Click outside listener for dropdowns
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setIsProfileOpen(false);
+      }
+      if (languageRef.current && !languageRef.current.contains(e.target as Node)) {
+        setIsLanguageOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    logoutUser();
+    setIsProfileOpen(false);
+    router.push("/login");
+  };
 
   return (
     <header className="w-full flex items-center justify-between gap-4 py-4 px-2 sm:px-4">
@@ -89,7 +135,7 @@ export default function Header({ onOpenMobileMenu }: HeaderProps) {
         </div>
 
         {/* Language Toggle Pill */}
-        <div className="relative">
+        <div ref={languageRef} className="relative">
           <button
             onClick={() => setIsLanguageOpen(!isLanguageOpen)}
             className="h-10 px-3.5 rounded-full bg-white border border-pharmacy-border/80 shadow-sm flex items-center gap-1.5 text-xs font-semibold text-pharmacy-textSecondary hover:text-pharmacy-textPrimary hover:shadow transition-all duration-200"
@@ -125,42 +171,117 @@ export default function Header({ onOpenMobileMenu }: HeaderProps) {
           )}
         </div>
 
-        {/* User Profile Chip */}
-        <div className="flex items-center gap-3 pl-1 sm:pl-2">
-          {/* Avatar */}
-          <div className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-white shadow-sm flex-shrink-0 bg-teal-100 flex items-center justify-center">
-            {!imgError ? (
-              <Image
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
-                alt="Budiono Siregar"
-                width={40}
-                height={40}
-                className="object-cover w-full h-full"
-                onError={() => setImgError(true)}
-                priority
-              />
-            ) : (
-              <span className="text-xs font-bold text-pharmacy-textPrimary">BS</span>
-            )}
-          </div>
-
-          {/* User Name & Subtext (hidden on small screens) */}
-          <div className="hidden md:flex flex-col text-left">
-            <span className="text-sm font-bold text-pharmacy-textPrimary leading-tight">
-              Budiono Siregar
-            </span>
-            <span className="text-[11px] text-pharmacy-textMuted leading-tight truncate max-w-[130px]">
-              budionosiregar@...
-            </span>
-          </div>
-
-          {/* Dropdown Chevron */}
+        {/* User Profile Chip with Interactive Dropdown */}
+        <div ref={profileRef} className="relative">
           <button
-            className="text-pharmacy-textMuted hover:text-pharmacy-textPrimary transition-colors p-0.5"
-            aria-label="User Options"
+            type="button"
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
+            className="flex items-center gap-3 pl-1 sm:pl-2 py-1 pr-2 rounded-2xl hover:bg-black/5 transition-colors cursor-pointer text-left focus:outline-none"
+            aria-expanded={isProfileOpen}
+            aria-label="User Profile Menu"
           >
-            <ChevronDown className="w-4 h-4 stroke-[2]" />
+            {/* Avatar */}
+            <div className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-white shadow-sm flex-shrink-0 bg-teal-100 flex items-center justify-center">
+              {!imgError && user.avatar ? (
+                <Image
+                  src={user.avatar}
+                  alt={user.name}
+                  width={40}
+                  height={40}
+                  className="object-cover w-full h-full"
+                  onError={() => setImgError(true)}
+                  priority
+                />
+              ) : (
+                <span className="text-xs font-bold text-teal-900">
+                  {user.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                </span>
+              )}
+            </div>
+
+            {/* User Name & Subtext (hidden on small screens) */}
+            <div className="hidden md:flex flex-col text-left">
+              <span className="text-sm font-bold text-pharmacy-textPrimary leading-tight">
+                {user.name}
+              </span>
+              <span className="text-[11px] text-pharmacy-textMuted leading-tight truncate max-w-[130px]">
+                {user.email}
+              </span>
+            </div>
+
+            {/* Dropdown Chevron */}
+            <div className="text-pharmacy-textMuted hover:text-pharmacy-textPrimary transition-colors p-0.5">
+              <ChevronDown
+                className={`w-4 h-4 stroke-[2] transition-transform duration-200 ${
+                  isProfileOpen ? "rotate-180" : ""
+                }`}
+              />
+            </div>
           </button>
+
+          {/* Interactive Dropdown Menu */}
+          {isProfileOpen && (
+            <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+              {/* Top Section: Avatar, Name, Email, Role */}
+              <div className="p-3 bg-slate-50 rounded-xl mb-1.5 border border-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="relative w-10 h-10 rounded-full overflow-hidden ring-1 ring-slate-200 flex-shrink-0 bg-teal-100 flex items-center justify-center">
+                    <Image
+                      src={user.avatar}
+                      alt={user.name}
+                      width={40}
+                      height={40}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-slate-800 truncate">{user.name}</p>
+                    <p className="text-[10px] text-slate-500 truncate">{user.email}</p>
+                    <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-teal-100 text-teal-800 border border-teal-200">
+                      {user.role}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Links */}
+              <div className="space-y-0.5">
+                <Link
+                  href="/settings"
+                  onClick={() => setIsProfileOpen(false)}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                >
+                  <Settings className="w-4 h-4 text-slate-400" />
+                  <span>Store Profile & Settings</span>
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsProfileOpen(false);
+                    router.push("/payments");
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                >
+                  <Monitor className="w-4 h-4 text-slate-400" />
+                  <span>Switch Session / Terminal</span>
+                </button>
+              </div>
+
+              {/* Divider Line */}
+              <div className="my-1.5 border-t border-slate-100" />
+
+              {/* Logout Button */}
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors"
+              >
+                <LogOut className="w-4 h-4 text-rose-500" />
+                <span>Logout / Lock Register</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { usePathname } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 
@@ -10,6 +11,12 @@ interface AppShellProps {
 
 export default function AppShell({ children }: AppShellProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  // On authentication screen, bypass the dashboard frame and chrome
+  if (pathname === "/login") {
+    return <main className="min-h-screen w-full bg-[#0B2B28]">{children}</main>;
+  }
 
   return (
     <div className="min-h-screen bg-[#E9F3F1] text-pharmacy-textPrimary p-2 sm:p-4 md:p-6 lg:p-7 flex flex-col justify-center">
