@@ -309,3 +309,33 @@ export const initialProducts: Product[] = [
     ],
   },
 ];
+
+export function getStoredProducts(): Product[] {
+  if (typeof window === "undefined") return initialProducts;
+  try {
+    const stored = localStorage.getItem("pms_products_list");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+  return initialProducts;
+}
+
+export function saveProduct(product: Product): Product[] {
+  const current = getStoredProducts();
+  const updated = [product, ...current.filter((p) => p.id !== product.id)];
+  initialProducts.unshift(product);
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem("pms_products_list", JSON.stringify(updated));
+    } catch (e) {
+      // ignore
+    }
+  }
+  return updated;
+}

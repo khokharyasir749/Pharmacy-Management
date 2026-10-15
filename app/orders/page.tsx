@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Search,
   Filter,
@@ -23,7 +24,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { OrderItem, OrderStatus, PaymentMethod } from "@/types/order";
-import { initialOrders } from "@/data/mockOrders";
+import { initialOrders, getStoredOrders } from "@/data/mockOrders";
 import CreateOrderModal from "@/components/orders/CreateOrderModal";
 import ModalPortal from "@/components/common/ModalPortal";
 
@@ -37,6 +38,10 @@ export default function OrdersPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    setOrders(getStoredOrders());
+  }, []);
 
   // KPI calculations
   const totalOrdersCount = orders.length;
@@ -171,14 +176,14 @@ export default function OrdersPage() {
             <span>Export CSV</span>
           </button>
 
-          <button
-            type="button"
-            onClick={() => setIsCreateModalOpen(true)}
+          {/* Create Order Button (Routes to dedicated full page) */}
+          <Link
+            href="/orders/new"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold shadow-sm hover:shadow transition-colors active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span>+ Create New Order</span>
-          </button>
+          </Link>
         </div>
       </div>
 

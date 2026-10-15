@@ -149,3 +149,33 @@ export const initialOrders: OrderItem[] = [
     status: "Pending",
   },
 ];
+
+export function getStoredOrders(): OrderItem[] {
+  if (typeof window === "undefined") return initialOrders;
+  try {
+    const stored = localStorage.getItem("pms_orders_list");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+  return initialOrders;
+}
+
+export function saveOrder(order: OrderItem): OrderItem[] {
+  const current = getStoredOrders();
+  const updated = [order, ...current.filter((o) => o.id !== order.id)];
+  initialOrders.unshift(order);
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem("pms_orders_list", JSON.stringify(updated));
+    } catch (e) {
+      // ignore
+    }
+  }
+  return updated;
+}

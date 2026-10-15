@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { Plus, CheckCircle2, X } from "lucide-react";
 import TotalOrdersChart from "@/components/analytics/TotalOrdersChart";
 import RevenueStatCard from "@/components/analytics/RevenueStatCard";
 import PendingOrdersCard from "@/components/analytics/PendingOrdersCard";
 import RecentOrdersTable from "@/components/orders/RecentOrdersTable";
 import CreateOrderModal from "@/components/orders/CreateOrderModal";
-import { initialOrders } from "@/data/mockOrders";
+import { initialOrders, getStoredOrders } from "@/data/mockOrders";
 import { OrderItem } from "@/types/order";
 
 export default function OrdersManagementPage() {
@@ -17,6 +18,10 @@ export default function OrdersManagementPage() {
     title: string;
     description: string;
   } | null>(null);
+
+  useEffect(() => {
+    setOrders(getStoredOrders());
+  }, []);
 
   // Dynamic KPI calculations based on live orders
   const currentTotalRevenue = orders.reduce(
@@ -85,17 +90,16 @@ export default function OrdersManagementPage() {
           </p>
         </div>
 
-        {/* Create Order Button - Wired to open CreateOrderModal */}
-        <button
-          type="button"
-          onClick={() => setIsCreateModalOpen(true)}
+        {/* Create Order Button - Routes to dedicated full POS checkout page */}
+        <Link
+          href="/orders/new"
           className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-pharmacy-dark hover:bg-pharmacy-darkHover text-white font-medium text-sm shadow-pill hover:shadow-lg transition-all duration-200 self-start sm:self-auto group active:scale-95 cursor-pointer"
         >
           <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-white group-hover:rotate-90 transition-transform duration-200">
             <Plus className="w-3.5 h-3.5 stroke-[3]" />
           </div>
           <span>Create Order</span>
-        </button>
+        </Link>
       </div>
 
       {/* Top Analytics Grid Section (Dual Line Chart + Stacked KPI Cards) */}

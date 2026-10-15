@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Plus,
   Package,
@@ -13,13 +14,17 @@ import {
 } from "lucide-react";
 import ProductCatalogTable from "@/components/products/ProductCatalogTable";
 import AddMedicineModal from "@/components/products/AddMedicineModal";
-import { initialProducts } from "@/data/mockProducts";
+import { initialProducts, getStoredProducts } from "@/data/mockProducts";
 import { Product } from "@/types/product";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    setProducts(getStoredProducts());
+  }, []);
 
   // Dynamic KPI Calculations
   const totalProductsCount = products.length;
@@ -87,17 +92,16 @@ export default function ProductsPage() {
           </p>
         </div>
 
-        {/* Add Medicine Button */}
-        <button
-          type="button"
-          onClick={() => setIsAddModalOpen(true)}
+        {/* Add Medicine Button (Routes to dedicated full page) */}
+        <Link
+          href="/products/new"
           className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-pharmacy-dark hover:bg-pharmacy-darkHover text-white font-medium text-sm shadow-pill hover:shadow-lg transition-all duration-200 self-start sm:self-auto group active:scale-95 cursor-pointer"
         >
           <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-white group-hover:rotate-90 transition-transform duration-200">
             <Plus className="w-3.5 h-3.5 stroke-[3]" />
           </div>
-          <span>Add Medicine</span>
-        </button>
+          <span>+ Add Medicine</span>
+        </Link>
       </div>
 
       {/* Top Summary KPI Cards (4-Column Grid) */}
