@@ -53,7 +53,7 @@ const navSections: NavSection[] = [
     collapsible: true,
     defaultExpanded: true,
     items: [
-      { name: "Orders", href: "/", icon: ShoppingCart },
+      { name: "Orders", href: "/orders", icon: ShoppingCart },
       { name: "Purchases", href: "/purchases", icon: Truck },
       { name: "Sales", href: "/sales", icon: TrendingUp },
       { name: "Customers", href: "/customers", icon: Users },
