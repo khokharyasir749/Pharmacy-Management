@@ -24,8 +24,12 @@ import {
   User,
   ArrowRight,
   Sparkles,
+  Camera,
+  Upload,
+  Trash2,
+  CheckCircle2,
 } from "lucide-react";
-import { getActiveUser, logoutUser, AuthUser, DEFAULT_ADMIN_USER } from "@/data/auth";
+import { getActiveUser, setActiveUser, logoutUser, AuthUser, DEFAULT_ADMIN_USER } from "@/data/auth";
 import { getStoredProducts } from "@/data/mockProducts";
 import { getStoredOrders } from "@/data/mockOrders";
 import { initialSuppliers } from "@/data/mockPurchases";
@@ -47,7 +51,9 @@ export default function Header({ onOpenMobileMenu }: HeaderProps) {
   // User Profile State & Dropdown
   const [user, setUser] = useState<AuthUser>(DEFAULT_ADMIN_USER);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [profileToast, setProfileToast] = useState<string | null>(null);
   const profileRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const languageRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -102,6 +108,47 @@ export default function Header({ onOpenMobileMenu }: HeaderProps) {
     logoutUser();
     setIsProfileOpen(false);
     router.push("/login");
+  };
+
+  const handleProfilePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setProfileToast("Sirf image file (JPG, PNG, WebP) select karein.");
+      setTimeout(() => setProfileToast(null), 4000);
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setProfileToast("Tasweer ka size 5MB se kam hona chahiye.");
+      setTimeout(() => setProfileToast(null), 4000);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result as string;
+      if (base64) {
+        const updatedUser: AuthUser = { ...user, avatar: base64 };
+        setUser(updatedUser);
+        setActiveUser(updatedUser);
+        setImgError(false);
+        setProfileToast("Profile picture kamyabi se update ho gayi!");
+        setTimeout(() => setProfileToast(null), 4000);
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  const handleRemovePhoto = () => {
+    const updatedUser: AuthUser = { ...user, avatar: "" };
+    setUser(updatedUser);
+    setActiveUser(updatedUser);
+    setImgError(false);
+    setProfileToast("Custom profile picture hata di gayi.");
+    setTimeout(() => setProfileToast(null), 4000);
   };
 
   // Fresh data queries
@@ -710,6 +757,15 @@ export default function Header({ onOpenMobileMenu }: HeaderProps) {
 
         {/* User Profile Chip with Interactive Dropdown */}
         <div ref={profileRef} className="relative">
+          {/* Hidden File Input for Custom Photo Upload */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/png, image/jpeg, image/jpg, image/webp"
+            className="hidden"
+            onChange={handleProfilePhotoUpload}
+          />
+
           <button
             type="button"
             onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -717,20 +773,17 @@ export default function Header({ onOpenMobileMenu }: HeaderProps) {
             aria-expanded={isProfileOpen}
             aria-label="User Profile Menu"
           >
-            {/* Avatar */}
-            <div className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-white shadow-sm flex-shrink-0 bg-teal-100 flex items-center justify-center">
+            {/* Header Avatar */}
+            <div className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-white shadow-sm flex-shrink-0 bg-gradient-to-tr from-teal-800 to-emerald-600 flex items-center justify-center text-white">
               {!imgError && user.avatar ? (
-                <Image
+                <img
                   src={user.avatar}
                   alt={user.name}
-                  width={40}
-                  height={40}
                   className="object-cover w-full h-full"
                   onError={() => setImgError(true)}
-                  priority
                 />
               ) : (
-                <span className="text-xs font-bold text-teal-900">
+                <span className="text-xs font-black tracking-wider text-white">
                   {user.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                 </span>
               )}
@@ -758,19 +811,43 @@ export default function Header({ onOpenMobileMenu }: HeaderProps) {
 
           {/* Interactive Dropdown Menu */}
           {isProfileOpen && (
-            <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-              {/* Top Section: Avatar, Name, Email, Role */}
-              <div className="p-3 bg-slate-50 rounded-xl mb-1.5 border border-slate-100">
-                <div className="flex items-center gap-2.5">
-                  <div className="relative w-10 h-10 rounded-full overflow-hidden ring-1 ring-slate-200 flex-shrink-0 bg-teal-100 flex items-center justify-center">
-                    <Image
-                      src={user.avatar}
-                      alt={user.name}
-                      width={40}
-                      height={40}
-                      className="object-cover w-full h-full"
-                    />
+            <div className="absolute right-0 mt-2 w-72 bg-white rounded-3xl shadow-xl border border-slate-100 p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150">
+              {/* Top Section: Avatar with Camera Edit, Name, Email, Role */}
+              <div className="p-3 bg-slate-50/90 rounded-2xl mb-1.5 border border-slate-100 space-y-3">
+                <div className="flex items-center gap-3">
+                  {/* Clickable Profile Avatar with Camera Overlay */}
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    title="Click karein apni marzi ki picture upload karne ke liye"
+                    className="relative group/avatar cursor-pointer flex-shrink-0"
+                  >
+                    <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-teal-700/20 shadow-sm bg-gradient-to-tr from-teal-800 to-emerald-600 flex items-center justify-center text-white">
+                      {!imgError && user.avatar ? (
+                        <img
+                          src={user.avatar}
+                          alt={user.name}
+                          className="object-cover w-full h-full"
+                          onError={() => setImgError(true)}
+                        />
+                      ) : (
+                        <span className="text-sm font-black tracking-wider text-white">
+                          {user.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                        </span>
+                      )}
+
+                      {/* Hover Camera Overlay */}
+                      <div className="absolute inset-0 bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity">
+                        <Camera className="w-4 h-4" />
+                      </div>
+                    </div>
+
+                    {/* Camera Badge Icon */}
+                    <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-teal-800 text-white border-2 border-white flex items-center justify-center shadow-xs">
+                      <Camera className="w-2.5 h-2.5" />
+                    </div>
                   </div>
+
+                  {/* Name & Role */}
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-bold text-slate-800 truncate">{user.name}</p>
                     <p className="text-[10px] text-slate-500 truncate">{user.email}</p>
@@ -778,6 +855,29 @@ export default function Header({ onOpenMobileMenu }: HeaderProps) {
                       {user.role}
                     </span>
                   </div>
+                </div>
+
+                {/* Upload & Remove Photo Action Buttons */}
+                <div className="flex items-center gap-1.5 pt-1 border-t border-slate-200/60">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-teal-800 hover:bg-teal-900 text-white text-[11px] font-semibold transition-all cursor-pointer shadow-xs active:scale-95"
+                  >
+                    <Upload className="w-3 h-3" />
+                    <span>Upload Photo</span>
+                  </button>
+
+                  {user.avatar && (
+                    <button
+                      type="button"
+                      onClick={handleRemovePhoto}
+                      title="Tasweer hatayein"
+                      className="inline-flex items-center justify-center p-1.5 rounded-xl border border-slate-200 bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-500 text-[11px] transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -821,6 +921,25 @@ export default function Header({ onOpenMobileMenu }: HeaderProps) {
           )}
         </div>
       </div>
+
+      {/* Profile Photo Toast Notification */}
+      {profileToast && (
+        <div className="fixed top-6 right-6 z-50 max-w-sm bg-white border border-teal-200 rounded-2xl p-3 shadow-floating flex items-center gap-2.5 animate-in slide-in-from-top-3 duration-200">
+          <div className="p-1 rounded-full bg-emerald-100 text-emerald-800 flex-shrink-0">
+            <CheckCircle2 className="w-3.5 h-3.5 stroke-[2.5]" />
+          </div>
+          <span className="text-xs font-semibold text-pharmacy-dark flex-1">
+            {profileToast}
+          </span>
+          <button
+            type="button"
+            onClick={() => setProfileToast(null)}
+            className="text-slate-400 hover:text-slate-600 p-0.5"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        </div>
+      )}
     </header>
   );
 }
