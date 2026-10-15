@@ -53,6 +53,7 @@ export default function CreateOrderModal({
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("Credit Card (visa)");
   const [discountPercent, setDiscountPercent] = useState<number>(0);
+  const [taxPercent, setTaxPercent] = useState<number>(5);
 
   // Validation / Feedback error
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -165,7 +166,9 @@ export default function CreateOrderModal({
     0
   );
   const discountAmount = (subtotal * discountPercent) / 100;
-  const grandTotal = Math.max(0, subtotal - discountAmount);
+  const taxableAmount = Math.max(0, subtotal - discountAmount);
+  const taxAmount = (taxableAmount * taxPercent) / 100;
+  const grandTotal = taxableAmount + taxAmount;
 
   // Confirm order
   const handleConfirmOrder = () => {
@@ -214,17 +217,17 @@ export default function CreateOrderModal({
     <ModalPortal isOpen={isOpen} onClose={onClose}>
       {/* Modal Dialog Card */}
       <div
-        className="relative w-full max-w-5xl max-h-[85vh] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+        className="relative w-full max-w-6xl xl:max-w-7xl h-[92vh] max-h-[92vh] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden m-auto animate-in fade-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header (fixed top) */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-white flex-shrink-0">
+        <div className="flex items-center justify-between p-5 sm:p-6 border-b border-slate-100 bg-white flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-teal-700 flex items-center justify-center text-white shadow-sm">
               <ShoppingCart className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-bold tracking-tight text-slate-800">
+              <h2 className="text-xl font-bold tracking-tight text-slate-800">
                 Create New Order
               </h2>
               <p className="text-xs text-slate-500">
@@ -252,9 +255,9 @@ export default function CreateOrderModal({
         )}
 
         {/* Form Body - 2 Columns (Catalog vs Cart) */}
-        <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* LEFT COLUMN: Customer & Medicine Selection (7 cols) */}
-          <div className="lg:col-span-7 flex flex-col space-y-5">
+        <div className="flex-1 overflow-y-auto lg:overflow-hidden p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-0">
+          {/* LEFT COLUMN: Customer & Medicine Selection (7 cols - 60% width) */}
+          <div className="lg:col-span-7 flex flex-col space-y-4 min-h-0 overflow-hidden">
             {/* Customer Selector */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold uppercase tracking-wider text-pharmacy-textSecondary">
@@ -382,7 +385,7 @@ export default function CreateOrderModal({
             </div>
 
             {/* Product Cards List */}
-            <div className="space-y-2.5 overflow-y-auto max-h-[320px] pr-1">
+            <div className="space-y-2.5 overflow-y-auto max-h-[58vh] pr-1.5">
               {filteredInventory.map((item) => (
                 <div
                   key={item.id}
@@ -459,8 +462,8 @@ export default function CreateOrderModal({
             </div>
           </div>
 
-          {/* RIGHT COLUMN: POS Cart & Order Summary (5 cols) */}
-          <div className="lg:col-span-5 bg-[#F6FAF8] rounded-2xl p-5 border border-pharmacy-border flex flex-col justify-between">
+          {/* RIGHT COLUMN: POS Cart & Order Summary (5 cols - 40% width) */}
+          <div className="lg:col-span-5 bg-[#F6FAF8] rounded-2xl p-5 border border-pharmacy-border flex flex-col justify-between min-h-0 overflow-y-auto">
             <div className="space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-pharmacy-borderLight">
                 <span className="text-xs font-bold uppercase tracking-wider text-pharmacy-textSecondary">
@@ -478,7 +481,7 @@ export default function CreateOrderModal({
               </div>
 
               {/* Cart Items List */}
-              <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
+              <div className="space-y-2.5 max-h-[26vh] xl:max-h-[30vh] overflow-y-auto pr-1">
                 {cartItems.length > 0 ? (
                   cartItems.map((c) => (
                     <div
@@ -587,24 +590,55 @@ export default function CreateOrderModal({
             {/* Pricing Breakdown & Checkout Total */}
             <div className="mt-4 pt-3 border-t border-pharmacy-border/80 space-y-2">
               <div className="flex justify-between text-xs text-pharmacy-textSecondary">
-                <span>Subtotal:</span>
+                <span>Subtotal ({cartItems.reduce((acc, c) => acc + c.quantity, 0)} items):</span>
                 <span className="font-semibold">${subtotal.toFixed(2)}</span>
               </div>
 
               <div className="flex justify-between items-center text-xs text-pharmacy-textSecondary">
                 <span>Discount (%):</span>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={discountPercent}
-                  onChange={(e) => setDiscountPercent(Number(e.target.value) || 0)}
-                  className="w-16 h-7 text-right px-2 rounded-lg border border-pharmacy-border bg-white text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-pharmacy-dark"
-                />
+                <div className="flex items-center gap-1.5">
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={discountPercent}
+                    onChange={(e) => setDiscountPercent(Number(e.target.value) || 0)}
+                    className="w-16 h-7 text-right px-2 rounded-lg border border-pharmacy-border bg-white text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-pharmacy-dark"
+                  />
+                  {discountPercent > 0 && (
+                    <span className="text-[11px] text-rose-600 font-medium">
+                      -${discountAmount.toFixed(2)}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center text-xs text-pharmacy-textSecondary">
+                <span>Sales Tax (%):</span>
+                <div className="flex items-center gap-1.5">
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={taxPercent}
+                    onChange={(e) => setTaxPercent(Number(e.target.value) || 0)}
+                    className="w-16 h-7 text-right px-2 rounded-lg border border-pharmacy-border bg-white text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-pharmacy-dark"
+                  />
+                  {taxAmount > 0 && (
+                    <span className="text-[11px] text-emerald-700 font-medium">
+                      +${taxAmount.toFixed(2)}
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div className="flex justify-between items-baseline pt-2 border-t border-dashed border-pharmacy-border text-pharmacy-dark">
-                <span className="text-sm font-bold">Grand Total:</span>
+                <div>
+                  <span className="text-sm font-bold block">Grand Total:</span>
+                  <span className="text-[10px] text-pharmacy-textMuted uppercase font-semibold">
+                    Live POS Receipt Total
+                  </span>
+                </div>
                 <span className="text-2xl font-black tracking-tight text-teal-900">
                   ${grandTotal.toFixed(2)}
                 </span>

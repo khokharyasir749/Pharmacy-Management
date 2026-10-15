@@ -130,7 +130,7 @@ export default function CloseRegisterModal({
   return (
     <ModalPortal isOpen={isOpen} onClose={onClose}>
       <div
-        className="relative w-full max-w-2xl max-h-[85vh] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+        className="relative w-full max-w-4xl xl:max-w-5xl h-[90vh] max-h-[90vh] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden m-auto animate-in fade-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header (fixed top) */}
